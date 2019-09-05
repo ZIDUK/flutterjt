@@ -1,47 +1,52 @@
+import 'dart:async';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:flutter/material.dart';
-//import '../screen1/screen1.dart';
+import '../screen2/gathering.dart';
 
-class Screen2 extends StatelessWidget {
-  final String nombre;
-  final String apellido;
+class Screen2 extends StatefulWidget {
+  Screen2State createState() => new Screen2State();
+}
 
-  Screen2(this.nombre, this.apellido);
+class Screen2State extends State<Screen2> {
+  List data;
 
+  Future<String> getDataJT() async {
+    http.Response response = await http.get(
+        Uri.encodeFull("https://jsonplaceholder.typicode.com/posts"),
+        headers: {"Accept": "application/json"});
+
+    this.setState(() {
+      data = json.decode(response.body);
+    });
+
+    print(data[1]["title"]);
+
+    return "succes!";
+  }
+
+  void initState() {
+    this.getDataJT();
+  }
 
   @override
   Widget build(BuildContext context) {
+    // Future<Post> post = FetchPost().fetchPost();
+
+    // print(post.toString());
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Second Screen'),
+      appBar: new AppBar(
+        title: new Text("Listviews"),
       ),
-      body:
-        Center(
-          child:
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-             children: <Widget>[
-               
-              Text('Esta data viene de otro screen: ' + nombre),
-
-              Container(
-              child: RaisedButton(
-                child: Text('Launch screen'),
-                onPressed: () {
-                  // Navigate to the second screen when tapped.
-                  // Navigator.push(context,
-                  //MaterialPageRoute(builder: (context) => Screen2()));
-                  },
-                )
-              ),
-              
-            ],
-
-            ),
-
-
-            
-
-          ),
+      body: new ListView.builder(
+        itemCount: data == null ? 0 : data.length,
+        itemBuilder: (BuildContext context, int index) {
+          return new Card(
+            child: new Text(data[index]["title"]),
+          );
+        },
+      ),
     );
   }
 }

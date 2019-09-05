@@ -12,7 +12,7 @@ class ButtonProc extends StatelessWidget {
               onPressed: () {
               // Navigate to the second screen when tapped.
               Navigator.push(context,
-               MaterialPageRoute(builder: (context) => Screen2('jonathan', 'pardo')));
+               MaterialPageRoute(builder: (context) => Screen2()));
               },
             ),
     );
