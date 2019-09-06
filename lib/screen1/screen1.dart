@@ -4,6 +4,7 @@ import './button.dart';
 import './text_secjt.dart';
 import './imageloc.dart';
 import './buttonproc.dart';
+import 'hamburmenu.dart';
 
 class Screen1 extends StatelessWidget {
   @override
@@ -12,6 +13,8 @@ class Screen1 extends StatelessWidget {
       appBar: AppBar(
         title: Text('Flutter Layout Screen1'),
       ),
+      drawer: 
+          HamburMenu(),
       body: ListView(
         children: <Widget>[
           ImageLoc(),
