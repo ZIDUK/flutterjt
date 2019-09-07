@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../screen2/screen2.dart';
 import './screen1.dart';
+import '../screen3/screen3.dart'; 
+import '../screen2/usuarios.dart';
+import '../socketscreen/socketscreen.dart';
 
 class HamburMenu extends StatefulWidget {
   HamburMenuState createState() => new HamburMenuState();
@@ -62,6 +65,14 @@ class HamburMenuState extends State<HamburMenu> {
             onTap: (){
               Navigator.push(context,
                MaterialPageRoute(builder: (context) => Screen1()));
+            },
+          ),
+          ListTile(
+            title: Text('Second Page'),
+            trailing: Icon(Icons.arrow_left),
+            onTap: (){
+              Navigator.push(context,
+               MaterialPageRoute(builder: (context) => Socketscreen()));
             },
           ),
           Divider(),
