@@ -10,7 +10,7 @@ class Socketscreen extends StatefulWidget {
 }
 
 class _Socketscreen extends State<Socketscreen> {
-  List<String> toPrint = ["trying to connect"];
+  /*List<String> toPrint = ["trying to connect"];
   SocketIOManager manager;
   Map<String, SocketIO> sockets = {};
   Map<String, bool> _isProbablyConnected = {};
@@ -155,47 +155,70 @@ class _Socketscreen extends State<Socketscreen> {
         ],
       ),
     );
+  }*/
+
+  SocketIOManager manager;
+  Map<String, SocketIO> sockets = {};
+  Map<String, bool> _isProbablyConnected = {};
+  SocketIO socket2;
+
+
+  
+  void initState() {
+    manager = SocketIOManager();
+    this.socketConnectionJT();
   }
 
+  Future socketConnectionJT() async {
 
+    SocketIO socket = await manager.createInstance(SocketOptions(
+      //Socket IO server URI
+        URI,
+        //Query params - can be used for authentication
+        query: {
+          "auth": "--SOME AUTH STRING---",
+          "info": "new connection from adhara-socketio",
+          "timestamp": DateTime.now().toString()
+        },
+        //Enable or disable platform channel logging
+        enableLogging: false,
+        transports: [Transports.WEB_SOCKET, Transports.POLLING] //Enable required transport
+    ));
+
+    socket.onConnect((data) {
+      print("connected...");
+      print(data);
+     
+    });
+    socket.connect();
+    socket.on('chat:message',(data) => print(data));
+
+    socket2 = socket;
+   
+   
+
+  }
+
+  void _sendmsg(){
+    socket2.emit('atime', [
+        "Hello world!",
+        
+      ]);
+
+    }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: const Text('Adhara Socket.IO example'),
-          backgroundColor: Colors.black,
-          elevation: 0.0,
-        ),
-        body: Container(
-          color: Colors.black,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Expanded(
-                  child: Center(
-                    child: ListView(
-                      children: toPrint.map((String _) => Text(_ ?? "")).toList(),
-                    ),
-                  )
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 8.0, bottom: 8.0),
-                child: Text("Default Connection",),
-              ),
-              getButtonSet("default"),
-              Padding(
-                padding: EdgeInsets.only(left: 8.0, bottom: 8.0, top: 8.0),
-                child: Text("Alternate Connection",),
-              ),
-              getButtonSet("alternate"),
-              SizedBox(height: 12.0,)
-            ],
-          ),
-        ),
+        title: Text('socket'),
+      ),
+      body: Container(
+        child: RaisedButton(
+            child: Text('Launch screen'),            
+              onPressed: _sendmsg,
+            ),
+      ),
     );
   }
 }
-
-  
