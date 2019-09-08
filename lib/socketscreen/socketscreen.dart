@@ -1,8 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:adhara_socket_io/adhara_socket_io.dart';
-  
-const String URI = "http://10.10.9.99:3000/";
+
+const String URI = "http://192.168.0.4:3000/";
 
 class Socketscreen extends StatefulWidget {
   @override
@@ -159,20 +161,22 @@ class _Socketscreen extends State<Socketscreen> {
 
   SocketIOManager manager;
   Map<String, SocketIO> sockets = {};
-  Map<String, bool> _isProbablyConnected = {};
-  SocketIO socket2;
+  SocketIO socket;
+  TextEditingController _controller = TextEditingController();
+  String _chat;
+  // StreamController _rcontroller;
 
-
-  
   void initState() {
     manager = SocketIOManager();
+    // _rcontroller = StreamController();
+    _chat = '.text';
+
     this.socketConnectionJT();
   }
 
   Future socketConnectionJT() async {
-
-    SocketIO socket = await manager.createInstance(SocketOptions(
-      //Socket IO server URI
+    socket = await manager.createInstance(SocketOptions(
+        //Socket IO server URI
         URI,
         //Query params - can be used for authentication
         query: {
@@ -182,32 +186,41 @@ class _Socketscreen extends State<Socketscreen> {
         },
         //Enable or disable platform channel logging
         enableLogging: false,
-        transports: [Transports.WEB_SOCKET, Transports.POLLING] //Enable required transport
-    ));
+        transports: [
+          Transports.WEB_SOCKET,
+          Transports.POLLING
+        ] //Enable required transport
+        ));
 
     socket.onConnect((data) {
       print("connected...");
       print(data);
-     
     });
     socket.connect();
-    socket.on('chat:message',(data) => print(data));
-
-    socket2 = socket;
-   
-   
-
+    socket.on('chat:message', (data) {
+      print(data);
+      
+    });
   }
 
-  void _sendmsg(){
-    socket2.emit('atime', [
-        "Hello world!",
-        
-      ]);
+  void _sendmsg() {
+    socket.emit('chat:message', [
+      {
+        "message": _controller.text,
+      }
+      
+    ]);
 
-    }
+    setState(() {
+        if (_controller.text == null) {
+          _chat = '_controller.text'; // TODO: implement setState
+        } else {
+          _chat = _controller.text;
+        }
+      });
+  }
 
-  @override
+  /* @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -219,6 +232,45 @@ class _Socketscreen extends State<Socketscreen> {
               onPressed: _sendmsg,
             ),
       ),
+    );
+  }*/
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Sockets'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Form(
+              child: TextFormField(
+                //esto captura el dato desde el input grafico
+                controller: _controller,
+                decoration: InputDecoration(labelText: 'Send a message'),
+              ),
+            ),
+            Text(_chat),
+            /*StreamBuilder(
+              stream: _rcontroller.stream,
+              builder: (context, snapshot) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 24.0),
+                  child: Text(snapshot.hasData ? '${snapshot.data}' : ''),
+                );
+              },
+            )*/
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _sendmsg,
+        tooltip: 'Send message',
+        child: Icon(Icons.send),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
