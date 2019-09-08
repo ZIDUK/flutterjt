@@ -197,10 +197,21 @@ class _Socketscreen extends State<Socketscreen> {
       print(data);
     });
     socket.connect();
-    socket.on('chat:message', (data) {
+    socket.on('server:chat:message', (data) {
       print(data);
+
+      setState(() {
+        if (data == null) {
+          _chat = '_controller.text'; // TODO: implement setState
+        } else {
+          _chat = data.toString();
+          
+        }
+      });
       
     });
+
+    
   }
 
   void _sendmsg() {
@@ -211,13 +222,7 @@ class _Socketscreen extends State<Socketscreen> {
       
     ]);
 
-    setState(() {
-        if (_controller.text == null) {
-          _chat = '_controller.text'; // TODO: implement setState
-        } else {
-          _chat = _controller.text;
-        }
-      });
+    
   }
 
   /* @override
