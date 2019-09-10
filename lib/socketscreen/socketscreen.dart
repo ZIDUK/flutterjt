@@ -200,6 +200,8 @@ class _Socketscreen extends State<Socketscreen> {
     socket.on('server:chat:message', (data) {
       print(data);
 
+      
+
       setState(() {
         if (data == null) {
           _chat = '_controller.text'; // TODO: implement setState
@@ -208,6 +210,7 @@ class _Socketscreen extends State<Socketscreen> {
           
         }
       });
+   
       
     });
 
